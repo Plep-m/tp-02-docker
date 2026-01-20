@@ -1,0 +1,29 @@
+services:
+  tor:
+    image: dperson/torproxy
+    container_name: tor
+    restart: unless-stopped
+    environment:
+      - LOCATION=FR
+      - TOR_StrictNodes=1
+    networks:
+      - net
+
+  backend:
+    build: ./backend
+    depends_on:
+      - tor
+    ports:
+      - "5000:5000"
+    networks:
+      - net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - net
+
+networks:
+  net:

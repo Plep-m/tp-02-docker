@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User API Data</title>
+</head>
+<body>
+  <h1>Random User API Response</h1>
+  
+  <h2>Profile Picture</h2>
+  <img id="profilePic" src="" alt="Profile Picture" width="128" height="128" border="1" />
+  
+  <h2>API Info</h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Property</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Seed</td>
+        <td id="seed">Loading...</td>
+      </tr>
+      <tr>
+        <td>Results</td>
+        <td id="results">Loading...</td>
+      </tr>
+      <tr>
+        <td>Page</td>
+        <td id="page">Loading...</td>
+      </tr>
+      <tr>
+        <td>Version</td>
+        <td id="version">Loading...</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>User Details</h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody id="userTableBody">
+      <tr>
+        <td colspan="2">Loading...</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p id="error"></p>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Management</title>
+</head>
+<body>
+  <h1>User Management</h1>
+  
+  <h2>Add New User</h2>
+  <form id="addUserForm">
+    <label>Username: <input type="text" id="newUsername" required /></label>
+    <label>Password: <input type="text" id="newPassword" required /></label>
+    <button type="submit">Add User</button>
+  </form>
+  
+  <h2>Users List</h2>
+  <div id="userTableContainer">
+    <% if (error) { %>
+      <p>Error loading users: <%= error %></p>
+    <% } else if (users.length === 0) { %>
+      <p>No users yet</p>
+    <% } else { %>
+      <table border="1">
+        <thead>
+          <tr><th>ID</th><th>Username</th><th>Password</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% users.forEach(user => { %>
+            <tr id="row-<%= user.id %>">
+              <td><%= user.id %></td>
+              <td id="username-<%= user.id %>"><%= user.username %></td>
+              <td id="password-<%= user.id %>"><%= user.password %></td>
+              <td>
+                <button onclick="editUsername(<%= user.id %>)">Edit Username</button>
+                <button onclick="editPassword(<%= user.id %>)">Edit Password</button>
+                <button onclick="deleteUser(<%= user.id %>)">Delete</button>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <script>
+    const API_URL = '/api/users';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('addUserForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        addUser();
+      });
+    });
+
+    async function loadUsers() {
+      window.location.reload();
+    }
+
+    async function addUser() {
+      const username = document.getElementById('newUsername').value;
+      const password = document.getElementById('newPassword').value;
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+        window.location.reload();
+      } catch (err) {
+        alert('Error adding user: ' + err.message);
+      }
+    }
+
+    async function editUsername(id) {
+      const newUsername = prompt('Enter new username:');
+      if (!newUsername) return;
+      
+      const passwordCell = document.getElementById(`password-${id}`);
+      const currentPassword = passwordCell.textContent;
+      
+      await updateUser(id, newUsername, currentPassword);
+    }
+
+    async function editPassword(id) {
+      const newPassword = prompt('Enter new password:');
+      if (!newPassword) return;
+      
+      const usernameCell = document.getElementById(`username-${id}`);
+      const currentUsername = usernameCell.textContent;
+      
+      await updateUser(id, currentUsername, newPassword);
+    }
+
+    async function updateUser(id, username, password) {
+      try {
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        window.location.reload();
+      } catch (err) {
+        alert('Error updating user: ' + err.message);
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Are you sure you want to delete this user?')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        window.location.reload();
+      } catch (err) {
+        alert('Error deleting user: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
